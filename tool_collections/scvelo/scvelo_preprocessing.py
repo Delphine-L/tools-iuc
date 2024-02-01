@@ -25,7 +25,7 @@ parser.add_argument("--cpc", "--cpercell", help = "np.array, optional (default: 
 parser.add_argument("--knc", "--keyncount", help = "str, optional (default: ‘n_counts’). Name of the field in adata.obs where the total counts per cell are stored", default="n_counts")
 parser.add_argument("--mppc", "--maxproportionpercell", help = "int (default: None). Exclude genes counts that account for more than a specific proportion of cell size, e.g. 0.05", type=float) # example is float though ?
 parser.add_argument("--uis", "--useinitialsize", help = "bool (default: True). Whether to use initial cell sizes oder actual cell sizes", default=True, type=bool)
-parser.add_argument("--ly", "--layer", help = "str or list (default: [‘spliced’, ‘unspliced’]). Keys for layers to be also considered for normalization", default="spliced,unspliced")
+#parser.add_argument("--ly", "--layer", help = "str or list (default: [‘spliced’, ‘unspliced’]). Keys for layers to be also considered for normalization", default="spliced,unspliced")
 
 # args pp moments
 
@@ -50,13 +50,13 @@ else :
     print("Input file missing")
 
 
-layerslist= args.ly.split(',')
+#layerslist= args.ly.split(',')
 if args.layernormalize:
     layer_norm= args.layernormalize.split(',')
 else:
     layer_norm=args.layernormalize
 
-print(layerslist)
+#print(layerslist)
 #scv.set_figure_params()
 
 #adata = scv.read(args.Input, cache=True)
@@ -64,7 +64,7 @@ print(layerslist)
 
 ##compute the first- and second-order moments (means and uncentered variances) for velocity estimation
 
-scv.pp.filter_and_normalize(adata, min_counts=args.min, min_counts_u=args.mu, min_cells=args.mc, min_cells_u=args.mcu, min_shared_counts=args.msc, min_shared_cells=args.msce, n_top_genes=args.ntop, retain_genes=args.retain, subset_highly_variable=args.subset, flavor=args.flavor, log=args.log, layers_normalize=layer_norm, after=args.cpca, counts_per_cell=args.cpc, key_n_counts=args.knc, max_proportion_per_cell=args.mppc, use_initial_size=args.uis, layers=layerslist)
+scv.pp.filter_and_normalize(adata, min_counts=args.min, min_counts_u=args.mu, min_cells=args.mc, min_cells_u=args.mcu, min_shared_counts=args.msc, min_shared_cells=args.msce, n_top_genes=args.ntop, retain_genes=args.retain, subset_highly_variable=args.subset, flavor=args.flavor, log=args.log, layers_normalize=layer_norm, counts_per_cell_after=args.cpca, counts_per_cell=args.cpc, key_n_counts=args.knc, max_proportion_per_cell=args.mppc, use_initial_size=args.uis)
 
 scv.pp.moments(adata, n_neighbors=args.nn, n_pcs=args.np, mode=args.md, method=args.mt, use_rep=args.ur, use_highly_variable=args.uhv)
 
