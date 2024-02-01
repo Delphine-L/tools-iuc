@@ -1,5 +1,6 @@
 import argparse
 import scvelo as scv
+import anndata
  
 # Initialize parser
 parser = argparse.ArgumentParser()
@@ -47,27 +48,30 @@ if args.Input:
     adata = scv.read(args.Input, cache=True)
 else :
     print("Input file missing")
-    adata = scv.datasets.pancreas()
 
 
-layers= args.layer.split(',')
+layerslist= args.ly.split(',')
 if args.layernormalize:
     layer_norm= args.layernormalize.split(',')
 else:
     layer_norm=args.layernormalize
 
-scv.set_figure_params()
+print(layerslist)
+#scv.set_figure_params()
 
-adata = scv.read(args.Input, cache=True)
+#adata = scv.read(args.Input, cache=True)
 
 
 ##compute the first- and second-order moments (means and uncentered variances) for velocity estimation
 
-scv.pp.filter_and_normalize(adata, min_counts=args.mincounts, min_counts_u=args.mincountsu, min_cells=args.mincells, min_cells_u=args.mincellsu, min_shared_counts=args.minsharedcounts, min_shared_cells=args.minsharedcells, n_top_genes=args.ntop, retain_genes=args.retain, subset_highly_variable=args.subset, flavor=args.flavor, log=args.log, layers_normalize=layer_norm, after=args.cpercellafter, counts_per_cell=args.cpercell, key_n_counts=args.keyncount, max_proportion_per_cell=args.maxproportionpercell, use_initial_size=args.useinitialsize, layers=layers)
+scv.pp.filter_and_normalize(adata, min_counts=args.min, min_counts_u=args.mu, min_cells=args.mc, min_cells_u=args.mcu, min_shared_counts=args.msc, min_shared_cells=args.msce, n_top_genes=args.ntop, retain_genes=args.retain, subset_highly_variable=args.subset, flavor=args.flavor, log=args.log, layers_normalize=layer_norm, after=args.cpca, counts_per_cell=args.cpc, key_n_counts=args.knc, max_proportion_per_cell=args.mppc, use_initial_size=args.uis, layers=layerslist)
 
-scv.pp.moments(adata, n_neighbors=args.nneighbors, n_pcs=args.npcs, mode=args.mode, method=args.method, use_rep=args.userep, use_highly_variable=args.usehighlyvariable)
+scv.pp.moments(adata, n_neighbors=args.nn, n_pcs=args.np, mode=args.md, method=args.mt, use_rep=args.ur, use_highly_variable=args.uhv)
+
+
+adata.write_loom(args.Output)
 
 # estimation of velocities
-scv.tl.velocity(adata, mode='stochastic')
+#scv.tl.velocity(adata, mode='stochastic')
 
-scv.tl.velocity_graph(adata)
+#scv.tl.velocity_graph(adata)
