@@ -1,0 +1,137 @@
+<tool id="scveloprepro" name="Scvelo Preprocessing" version="@VERSION@+galaxy0" profile="21.01" >
+    <description>Preprocessing annDataa for the analysis of RNA velocity</description>
+    <macros>
+        <token name="@VERSION@">0.2.5</token>
+     </macros>
+    <requirements>
+        <requirement type="package" version="@VERSION" >scvelo</requirement>
+    </requirements>
+    <command detect_errors="exit_code" >
+<![CDATA[
+./scvelo_preprocessing.py -o '$res' -i '$input1'
+#if $filtandnorm.mincounts
+    --min $filtandnorm.mincounts
+#end if
+#if $filtandnorm.mincountsu   
+    --mu $filtandnorm.mincountsu
+#end if
+#if $filtandnorm.mincells   
+    --mc $filtandnorm.mincells
+#end if   
+#if $filtandnorm.mincellsu   
+    --mcu $filtandnorm.mincellsu
+#end if      
+#if $filtandnorm.minsharedcounts   
+    --msc $filtandnorm.minsharedcounts
+#end if         
+#if $filtandnorm.minsharedcells   
+    --msce $filtandnorm.minsharedcells
+#end if    
+#if $filtandnorm.ntopgenes   
+    -n $filtandnorm.ntopgenes
+#end if  
+#if $filtandnorm.retaingenes   
+    -r $filtandnorm.retaingenes
+#end if  
+ 
+-s $filtandnorm.subsethighlyvariable  
+-f $filtandnorm.flavor
+-l $filtandnorm.uselog
+#if $filtandnorm.layernormalize   
+    -y $filtandnorm.layernormalize
+#end if  
+#if $filtandnorm.cpercellafter   
+    -cpca $filtandnorm.cpercellafter
+#end if 
+#if $filtandnorm.maxproportionpercell   
+    -mppc $filtandnorm.maxproportionpercell
+#end if  
+#if $filtandnorm.keyncount   
+    -knc $filtandnorm.keyncount
+#end if  
+--uis $filtandnorm.useinitialsize
+
+--nn $moments.nneighbors
+
+#if $moments.npcs   
+    --np $moments.npcs
+#end if  
+--md $moments.mode
+--mt $moments.method
+--uhv $moments.usehvg
+#if $moments.userep   
+    --ur $moments.userep
+#end if  
+
+        
+]]>
+    </command>
+        <param type="data" name="input1" format="loom" />
+        <section name="filtandnorm" title="Filter and Normalisation" >
+            <param name="mincounts" type="integer" min="1" optional="true"
+                    label="Min Counts (spliced)" help="Minimum number of counts required for a gene to pass filtering (spliced)." />
+            <param name="mincountsu" type="integer" min="1" optional="true"
+                    label="Min Counts (unspliced)" help="Minimum number of counts required for a gene to pass filtering (unspliced)." />
+            <param name="mincells" type="integer" min="1" optional="true"
+                    label="Min Cells (spliced)" help="Minimum number of cells expressed required to pass filtering (spliced)." />
+            <param name="mincellsu" type="integer" min="1" optional="true"
+                    label="Min Cells (unspliced)" help="Minimum number of cells expressed required to pass filtering (unspliced)." />
+            <param name="minsharedcounts" type="integer" min="1" optional="true"
+                    label="Min Shared Counts" help="Minimum number of counts (both unspliced and spliced) required for a gene." />
+            <param name="minsharedcells" type="integer" min="1" optional="true"
+                    label="Min Shared Cells" help="Minimum number of cells (both unspliced and spliced) required for a gene." />
+            <param name="ntopgenes" type="integer" min="1" optional="true"
+                    label="Number of genes to keep"  />
+            <param name="retaingenes" type="text" value="" optional="true" 
+                    label="Retain Genes" help="List of gene names to be retained independent of thresholds." />
+            <param name="subsethighlyvariable" type="boolean" value="true" checked="true"
+                    label="Subset Highly Variable genes" help="Whether to subset highly variable genes or store in the default slot" />
+            <param name="flavor" type="select" label="Flavour"
+                    help="Choose the flavor for computing normalized dispersion. If choosing ‘seurat’, this expects non-logarithmized data." >
+                <option value="seurat" selected="true">Seurat</option>
+                <option value="cell_ranger" >Cell Ranger</option>
+                <option value="svr" >SVR</option>
+            </param>
+            <param name="uselog" type="boolean" label="Take logarithm" checked="true" />
+            <param name="layernormalize" type="text" value="" optional="true" 
+                    label="List of layers to be normalized." help="  If not set, the layers {‘X’, ‘spliced’, ‘unspliced’} are considered for normalization upon testing whether they have already been normalized (by checking type of entries: int -> unprocessed, float -> processed)." />
+            <param name="cpercellafter" type="float" min="0" optional="true"
+                    label="Count per cell after" help="If not set, after normalization, each cell has a total count equal to the median of the counts_per_cell before normalization" />
+            <param name="maxproportionpercell" type="float" min="0" optional="true"
+                    label="Max proportion per cell" help="Exclude genes counts that account for more than a specific proportion of cell size, e.g. 0.05." />
+            <param name="keyncount" type="text" value="" optional="true" 
+                    label="Name of the field in adata.obs where the total counts per cell are stored" />
+            <param name="useinitialsize" type="boolean" checked="true"
+                    label="Use initial cell sizes over actual cell sizes" />
+        </section>
+        <section name="moments" title="Moments" >
+            <param name="nneighbors" type="integer" min="5" value="30" label="Number of Neighbours" />
+            <param name="npcs" type="integer" min="1" label="Number of PCs" optional="true"
+                    help="Number of principal components to use. If not specified, the full space is used of a pre-computed PCA, or 30 components are used when PCA is computed internally." />
+            <param name="mode" type="boolean" label="Distance Metrics: Connectivities?" truevalue="connectivities" falsevalue="distances"
+                    help="Use the 'connectivities' as the distance metric for moment computation if true. Otherwise 'distances'" />
+            <param name="method" type="select" label="Method to compute Neighbors" >
+                <option value="umap"  selected="true">umap</option>
+                <option value="hnsw" >hnsw</option>
+                <option value="sklearn" >sklearn</option>
+            </param>
+            <param name="userep" type="text" label="Use the indicated representation. If not set, the representation is chosen automatically: for .n_vars < 50, .X is used, otherwise ‘X_pca’ is used." optional="true" />
+            <param name="usehvg" type="boolean" label="Use highly variable genes only?" checked="true" />
+        </section>
+    </inputs>
+    <outputs>
+        <data name="res" format="loom" label="Preprocessed annData" />
+    </outputs>
+    <tests>
+        <test>
+            <param name="do" value="preprocess" />
+            <output name="res" value="test.pdf" />
+        </test>
+    </tests>
+    <help>
+        What up
+    </help>
+    <citations>
+
+    </citations>
+</tool>
