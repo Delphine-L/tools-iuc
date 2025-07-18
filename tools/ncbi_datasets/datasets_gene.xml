@@ -235,12 +235,12 @@ dataformat
             </output>
             <output name="rna_fasta">
                 <assert_contents>
-                    <has_text text="&gt;"/>
+                    <has_text text=">"/>
                 </assert_contents>
             </output>
             <output name="protein_fasta">
                 <assert_contents>
-                    <has_text text="&gt;"/>
+                    <has_text text=">"/>
                 </assert_contents>
             </output>
         </test>
@@ -263,12 +263,12 @@ dataformat
             </output>
             <output name="rna_fasta">
                 <assert_contents>
-                    <has_text text="&gt;"/>
+                    <has_text text=">"/>
                 </assert_contents>
             </output>
             <output name="protein_fasta">
                 <assert_contents>
-                    <has_text text="&gt;"/>
+                    <has_text text=">"/>
                 </assert_contents>
             </output>
         </test>
@@ -298,12 +298,12 @@ dataformat
             </output>
             <output name="gene_fasta">
                 <assert_contents>
-                    <has_text text="&gt;"/>
+                    <has_text text=">"/>
                 </assert_contents>
             </output>
             <output name="cds_fasta">
                 <assert_contents>
-                    <has_text text="&gt;"/>
+                    <has_text text=">"/>
                 </assert_contents>
             </output>
         </test>
@@ -357,12 +357,12 @@ dataformat
             </output>
             <output name="threep_utr_fasta">
                 <assert_contents>
-                    <has_text text="&gt;"/>
+                    <has_text text=">"/>
                 </assert_contents>
             </output>
             <output name="fivep_utr_fasta">
                 <assert_contents>
-                    <has_text text="&gt;"/>
+                    <has_text text=">"/>
                 </assert_contents>
             </output>
         </test>
@@ -446,17 +446,17 @@ dataformat
             </output>
             <output name="gene_fasta">
                 <assert_contents>
-                    <has_text text="&gt;"/>
+                    <has_text text=">"/>
                 </assert_contents>
             </output>
             <output name="gene_flanks">
                 <assert_contents>
-                    <has_text text="&gt;"/>
+                    <has_text text=">"/>
                 </assert_contents>
             </output>
             <output name="protein_fasta">
                 <assert_contents>
-                    <has_text text="&gt;"/>
+                    <has_text text=">"/>
                 </assert_contents>
             </output>
             <assert_command>
