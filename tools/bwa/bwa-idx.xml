@@ -1,0 +1,50 @@
+<tool id="bwa_idx" name="BWA indexer"  version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE_VERSION@">
+    <description>Build BWA reference index</description>
+    <macros>
+        <import>bwa_macros.xml</import>
+    </macros>
+    <expand macro="bio_tools"/>
+    <expand macro="requirements"/>
+    <command><![CDATA[
+mkdir '$index.extra_files_path' &&
+cd '$index.extra_files_path' &&
+bwa index
+#if str($index_a) != 'auto'
+    -a '${index_a}'
+#end if
+-p 'reference' '${reference}'
+    ]]></command>
+    <inputs>
+        <param name="reference" type="data" format="fasta,fasta.gz" label="Select a genome to index" help="Build an index for this FASTA sequence."/>
+        <param name="index_a" type="select" label="Algorithm for constructing the BWT index" help="(-a)">
+            <option value="auto">Auto. Let BWA decide the best algorithm to use</option>
+            <option value="is">IS linear-time algorithm for constructing suffix array. It requires 5.37N memory where N is the size of the database. IS is moderately fast, but does not work with database larger than 2GB</option>
+            <option value="bwtsw">BWT-SW algorithm. This method works also with big genomes</option>
+        </param>
+    </inputs>
+    <outputs>
+        <data name="index" format="bwa_index"/>
+    </outputs>
+    <tests>
+        <test>
+            <param name="reference" ftype="fasta" value="bwa-mem-mt-genome.fa"/>
+            <output name="index" ftype="bwa_index">
+                <extra_files name="reference.amb" type="file" value="test-cache/reference.amb"></extra_files>
+            </output>
+        </test>
+    </tests>
+    <help><![CDATA[
+**What it does**
+BWA_ is a software package for mapping low-divergent sequences against a large reference genome, such as the human genome.
+
+This tool builds a reference index for the BWA-MEM and BWA Galaxy tools.
+
+@ref_genomes@
+
+@links@
+    ]]></help>
+    <citations>
+        <citation type="doi">10.1093/bioinformatics/btp324</citation>
+        <citation type="doi">10.1093/bioinformatics/btp698</citation>
+    </citations>
+</tool>
